@@ -46,6 +46,8 @@ public class Main {
 
 	private static String MYSQL_QUOTING_CARACTER = "[%s]";
 
+	private static String POSTGRES_QUOTING_CARACTER = "\"%s\"";
+
 	public Main() {
 	}
 
@@ -324,6 +326,9 @@ public class Main {
 		}
 		if (jdbcUrl.contains("mysql")) {
 			return MYSQL_QUOTING_CARACTER;
+		}
+		if (jdbcUrl.contains("postgresql")) {
+			return POSTGRES_QUOTING_CARACTER;
 		}
 		return null;
 	}
