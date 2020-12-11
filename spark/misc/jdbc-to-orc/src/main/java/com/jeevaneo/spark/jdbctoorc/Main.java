@@ -115,7 +115,10 @@ public class Main {
 		}
 	}
 
+
+
 	public static void main(String[] args) throws Exception {
+		log.info("Let's export!");
 
 		Args params = new Args(args);
 		String jdbcUrl = params.ms("jdbc-url");
@@ -140,8 +143,11 @@ public class Main {
 				moi.exportTable(t);
 			}
 		} else if (null != schema) {
+			log.info("Loading schema : " + schema);
 			moi.exportAll(schema);
 		} else {
+			log.info("Loading All objects ");
+
 			moi.exportAll();
 		}
 
@@ -191,6 +197,7 @@ public class Main {
 
 	private Set<String> listTables(String schema) throws SQLException {
 		Set<String> tables = new TreeSet<>();
+
 		try (Connection con = connect();) {
 			DatabaseMetaData md = con.getMetaData();
 
@@ -216,6 +223,9 @@ public class Main {
 				}
 				rs.close();
 			}
+		}catch (Exception e){
+			log.error(e);
+
 		}
 		log.info("Exporting " + tables.size() + " tables...");
 		return tables;
@@ -262,7 +272,9 @@ public class Main {
 			ForkJoinPool threadPool = new ForkJoinPool(getParallelism());
 			threadPool.submit(() -> {
 				try {
-					listTables(schema).parallelStream().forEach(t -> exportTable(ss, t));
+					listTables(schema)
+							.parallelStream()
+							.forEach(t -> exportTable(ss, t));
 				} catch (SQLException e) {
 					throw new RuntimeException(e);
 				}
